@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AlbumRepository;
@@ -16,6 +19,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['album:read']],
     denormalizationContext: ['groups' => ['album:write']]
+)]
+
+// On ajoute des filtres
+#[ApiFilter(
+    SearchFilter::class, properties:[
+        'title' => 'ipartial', // i pour insensible à la casse maj/min
+        'id' => 'exact',
+        'artist.name' => 'ipartial',
+        'artist.biography' => 'ipartial',
+        'genre.label' => 'iexact',
+        'songs.title' => 'ipartial',
+    ]
+)]
+
+#[ApiFilter(
+    BooleanFilter::class, properties:[
+        'isActive'
+    ]
 )]
 
 class Album
